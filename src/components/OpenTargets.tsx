@@ -2,53 +2,12 @@ import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import client from "../apollo";
-import { gql } from "@apollo/client";
 import { Link } from "react-router-dom";
 import Charts from "./Charts";
+import { OPEN_TARGETS_QUERY } from "../queries";
+import { DiseaseData } from "../types";
 
-interface Target {
-  id: string;
-  approvedSymbol: string;
-  approvedName: string;
-}
 
-interface DatatypeScore {
-  id: string;
-  score: number;
-}
-
-interface Row {
-  target: Target;
-  score: number;
-  datatypeScores: DatatypeScore[];
-}
-
-interface AssociatedTargets {
-  rows: Row[];
-}
-
-interface DiseaseData {
-  disease: {
-    associatedTargets: AssociatedTargets;
-  };
-}
-
-const OPEN_TARGETS_QUERY = gql`
-  query lungCarcinomaAssociatedTargets {
-    disease(efoId: "EFO_0001071") {
-      associatedTargets(page: { index: 0, size: 10 }) {
-        rows {
-          target {
-            id
-            approvedSymbol
-            approvedName
-          }
-          score
-        }
-      }
-    }
-  }
-`;
 
 const OpenTargets = () => {
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
@@ -61,6 +20,7 @@ const OpenTargets = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   const targets = data?.disease.associatedTargets.rows;
+  console.log(targets);
 
   const toggleRow = (rowIndex: number) => {
     setExpandedRows({
@@ -114,7 +74,7 @@ const OpenTargets = () => {
               {expandedRows[index] && (
                 <tr>
                   <td className="p-2 border" colSpan={4}>
-                    <Charts target={row.target} />
+                    <Charts target={row.target}  />
                   </td>
                 </tr>
               )}

@@ -1,17 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
+import { DiseaseData, Target } from "../types";
+import { OPEN_TARGETS_QUERY } from "../queries";
+import { useQuery } from "@apollo/client";
+import client from "../apollo";
 
-interface DatatypeScore {
-  id: string;
-  score: number;
-}
-
-interface Target {
-  id: string;
-  approvedSymbol: string;
-  approvedName: string;
-  datatypeScores?: DatatypeScore[]; // Make datatypeScores optional
-}
 
 interface ChartsProps {
   target: Target;
@@ -20,6 +13,11 @@ interface ChartsProps {
 const Charts = ({ target }: ChartsProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
+  const { loading, error, data } = useQuery<DiseaseData>(OPEN_TARGETS_QUERY, {
+    client: client,
+  });
+
+  console.log(data)
 
   useEffect(() => {
     if (!canvasRef.current) return;
