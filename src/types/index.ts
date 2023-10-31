@@ -24,3 +24,21 @@ export interface DiseaseData {
     associatedTargets: AssociatedTargets;
   };
 }
+
+// Define types for labels and scores
+export type Labels = string[];
+export type Scores = number[];
+
+export interface ChartData {
+    labels: Labels;
+    datasets: ChartDataset[];
+  };
+  
+  export interface ChartDataset {
+    label: string;
+    data: Scores;
+    backgroundColor: string;
+    borderColor: string;
+    borderWidth: number;
+  };
+  

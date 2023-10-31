@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { DiseaseData, Target } from "../types";
+import { ChartData, DiseaseData, Labels, Scores, Target } from "../types";
 import { OPEN_TARGETS_QUERY } from "../queries";
 import { useQuery } from "@apollo/client";
 import client from "../apollo";
 import { Bar, Radar } from "react-chartjs-2";
 
 import { Chart, registerables } from "chart.js";
+import { useState } from "react";
 
 Chart.register(...registerables);
 
@@ -13,11 +13,9 @@ interface ChartsProps {
   target: Target;
 }
 
-// Define types for labels and scores
-type Labels = string[];
-type Scores = number[];
-
 const Charts = ({ target }: ChartsProps) => {
+  const [activeTab, setActiveTab] = useState<"bar" | "radar">("bar");
+
   const { loading, error, data } = useQuery<DiseaseData>(OPEN_TARGETS_QUERY, {
     client: client,
   });
@@ -40,13 +38,20 @@ const Charts = ({ target }: ChartsProps) => {
         {
           label: `Association Scores for ${approvedSymbol}`,
           data: scores,
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
-          borderColor: "rgba(75, 192, 192, 1)",
+          backgroundColor: "rgb(16 185 129, 0.5)",
+          borderColor: "rgb(16 185 129)",
           borderWidth: 1,
         },
       ],
     };
   });
+
+  const chart =
+    activeTab === "bar" ? (
+      <Bar data={chartDataMap[target.approvedSymbol]} />
+    ) : (
+      <Radar data={chartDataMap[target.approvedSymbol]} />
+    );
 
   return (
     <div>
@@ -54,24 +59,28 @@ const Charts = ({ target }: ChartsProps) => {
         <h2 className="text-2xl font-bold mb-4">
           Association Scores for {target.approvedSymbol}
         </h2>
-        <Bar data={chartDataMap[target.approvedSymbol]} />
+        <div className="space-x-4 mb-4">
+          <button
+            onClick={() => setActiveTab("bar")}
+            className={`${
+              activeTab === "bar" ? "bg-emerald-500" : "bg-emerald-200"
+            } text-white px-2 py-1 rounded-md`}
+          >
+            Bar Chart
+          </button>
+          <button
+            onClick={() => setActiveTab("radar")}
+            className={`${
+              activeTab === "radar" ? "bg-emerald-500" : "bg-emerald-200"
+            } text-white px-2 py-1 rounded-md`}
+          >
+            Radar Chart
+          </button>
+        </div>
       </div>
+      {chart}
     </div>
   );
 };
 
 export default Charts;
-
-// Define ChartData type
-type ChartData = {
-  labels: Labels;
-  datasets: ChartDataset[];
-};
-
-type ChartDataset = {
-  label: string;
-  data: Scores;
-  backgroundColor: string;
-  borderColor: string;
-  borderWidth: number;
-};
