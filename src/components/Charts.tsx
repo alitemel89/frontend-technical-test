@@ -38,8 +38,8 @@ const Charts = ({ target }: ChartsProps) => {
         {
           label: `Association Scores for ${approvedSymbol}`,
           data: scores,
-          backgroundColor: "rgb(16 185 129, 0.5)",
-          borderColor: "rgb(16 185 129)",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
           borderWidth: 1,
         },
       ],
