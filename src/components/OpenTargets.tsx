@@ -6,8 +6,7 @@ import { Link } from "react-router-dom";
 import Charts from "./Charts";
 import { OPEN_TARGETS_QUERY } from "../queries";
 import { DiseaseData } from "../types";
-
-
+import { BeatLoader } from "react-spinners";
 
 const OpenTargets = () => {
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
@@ -16,7 +15,15 @@ const OpenTargets = () => {
     client: client,
   });
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    // Render the BeatLoader from react-spinners while loading
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <h4 className="text-emerald-500 text-xl">Loading...</h4>
+        <BeatLoader size={15} margin={5} color={"#36D7B7"} loading={true} />
+      </div>
+    );
+  }
   if (error) return <p>Error: {error.message}</p>;
 
   const targets = data?.disease.associatedTargets.rows;
@@ -74,7 +81,7 @@ const OpenTargets = () => {
               {expandedRows[index] && (
                 <tr>
                   <td className="p-2 border" colSpan={4}>
-                    <Charts target={row.target}  />
+                    <Charts target={row.target} />
                   </td>
                 </tr>
               )}

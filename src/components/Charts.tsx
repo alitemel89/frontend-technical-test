@@ -7,6 +7,7 @@ import { Bar, Radar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import { useState } from "react";
 import { formatLabel } from "../utils";
+import { BeatLoader } from "react-spinners";
 
 Chart.register(...registerables);
 
@@ -21,7 +22,14 @@ const Charts = ({ target }: ChartsProps) => {
     client: client,
   });
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    // Render the BeatLoader from react-spinners while loading
+    return (
+      <div className="spinner-container">
+        <BeatLoader size={15} margin={5} color={'#36D7B7'} loading={true} />
+      </div>
+    );
+  }
   if (error) return <p>Error: {error.message}</p>;
 
   // Initialize an object to store chart data for each target
