@@ -6,6 +6,7 @@ import { Bar, Radar } from "react-chartjs-2";
 
 import { Chart, registerables } from "chart.js";
 import { useState } from "react";
+import { formatLabel } from "../utils";
 
 Chart.register(...registerables);
 
@@ -28,7 +29,7 @@ const Charts = ({ target }: ChartsProps) => {
 
   data?.disease.associatedTargets.rows.forEach((row) => {
     const approvedSymbol = row.target.approvedSymbol;
-    const labels: Labels = row.datatypeScores.map((datatype) => datatype.id);
+    const labels: Labels = row.datatypeScores.map((datatype) => formatLabel(datatype.id));
     const scores: Scores = row.datatypeScores.map((datatype) => datatype.score);
 
     // Create chart data for each target
@@ -36,7 +37,7 @@ const Charts = ({ target }: ChartsProps) => {
       labels,
       datasets: [
         {
-          label: `Association Scores for ${approvedSymbol}`,
+          label: `Data Type Scores: ${target.approvedSymbol} and lung carcinoma`,
           data: scores,
           backgroundColor: "rgba(75, 192, 192, 0.2)",
           borderColor: "rgba(75, 192, 192, 1)",
@@ -57,7 +58,7 @@ const Charts = ({ target }: ChartsProps) => {
     <div>
       <div key={target.approvedSymbol}>
         <h2 className="text-2xl font-bold mb-4">
-          Association Scores for {target.approvedSymbol}
+          Data Type Scores: {target.approvedSymbol} and lung carcinoma
         </h2>
         <div className="space-x-4 mb-4">
           <button
