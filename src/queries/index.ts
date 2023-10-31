@@ -20,3 +20,5 @@ export const OPEN_TARGETS_QUERY = gql`
     }
   }
 `;
+
+

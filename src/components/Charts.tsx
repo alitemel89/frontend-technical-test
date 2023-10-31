@@ -1,74 +1,77 @@
-import { useEffect, useRef } from "react";
-import Chart from "chart.js/auto";
+import { useState } from "react";
 import { DiseaseData, Target } from "../types";
 import { OPEN_TARGETS_QUERY } from "../queries";
 import { useQuery } from "@apollo/client";
 import client from "../apollo";
+import { Bar, Radar } from "react-chartjs-2";
 
+import { Chart, registerables } from "chart.js";
+
+Chart.register(...registerables);
 
 interface ChartsProps {
   target: Target;
 }
 
+// Define types for labels and scores
+type Labels = string[];
+type Scores = number[];
+
 const Charts = ({ target }: ChartsProps) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const chartRef = useRef<Chart | null>(null);
   const { loading, error, data } = useQuery<DiseaseData>(OPEN_TARGETS_QUERY, {
     client: client,
   });
 
-  console.log(data)
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
+  // Initialize an object to store chart data for each target
+  const chartDataMap: Record<string, ChartData> = {};
 
-    const datatypeScores = target.datatypeScores;
+  data?.disease.associatedTargets.rows.forEach((row) => {
+    const approvedSymbol = row.target.approvedSymbol;
+    const labels: Labels = row.datatypeScores.map((datatype) => datatype.id);
+    const scores: Scores = row.datatypeScores.map((datatype) => datatype.score);
 
-    // Destroy the existing Chart instance if it exists
-    if (chartRef.current) {
-      chartRef.current.destroy();
-    }
-
-    // Extract scores and labels from datatypeScores
-    const labels = datatypeScores?.map((score) => score.id);
-    const scores = datatypeScores?.map((score) => score.score);
-
-    console.log(scores)
-
-    // Create a new chart with proper type definitions
-    const ctx = canvasRef.current;
-    chartRef.current = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: labels as string[], // Typecast to match expected type
-        datasets: [
-          {
-            label: "Association Scores",
-            data: scores as number[], // Typecast to match expected type
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
+    // Create chart data for each target
+    chartDataMap[approvedSymbol] = {
+      labels,
+      datasets: [
+        {
+          label: `Association Scores for ${approvedSymbol}`,
+          data: scores,
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
         },
-      },
-    });
-  }, [target.datatypeScores]);
+      ],
+    };
+  });
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">
-        Association Scores for {target.approvedSymbol}
-      </h2>
-      <canvas ref={canvasRef} width="400" height="200"></canvas>
+      <div key={target.approvedSymbol}>
+        <h2 className="text-2xl font-bold mb-4">
+          Association Scores for {target.approvedSymbol}
+        </h2>
+        <Bar data={chartDataMap[target.approvedSymbol]} />
+      </div>
     </div>
   );
 };
 
 export default Charts;
+
+// Define ChartData type
+type ChartData = {
+  labels: Labels;
+  datasets: ChartDataset[];
+};
+
+type ChartDataset = {
+  label: string;
+  data: Scores;
+  backgroundColor: string;
+  borderColor: string;
+  borderWidth: number;
+};
