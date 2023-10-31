@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# EMBL Frontend Technical Test
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -44,3 +44,19 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+## Technologies Used
+
+- React: A JavaScript library for building user interfaces.
+- Apollo Client: A fully-featured caching GraphQL client for React.
+- Chart.js: A JavaScript library for creating interactive and visually appealing charts.
+- React Chartjs 2: A wrapper for Chart.js to use it with React.
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/alitemel89/frontend-technical-test.git
+
+### `npm install`
