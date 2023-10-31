@@ -1,10 +1,11 @@
 import OpenTargets from "./components/OpenTargets";
+import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
   return (
-    <div>
-        <OpenTargets />
-    </div>
+    <Router>
+      <OpenTargets />
+    </Router>
   );
 }
 

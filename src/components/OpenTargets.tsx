@@ -3,6 +3,7 @@ import { useQuery } from "@apollo/client";
 import { Bar } from "react-chartjs-2";
 import client from "../apollo";
 import { gql } from "@apollo/client";
+import { Link } from "react-router-dom";
 
 interface Target {
   id: string;
@@ -60,11 +61,11 @@ const OpenTargets = () => {
 
   return (
     <div className="px-12 mx-auto max-w-5xl">
-      <h1 className="text-2xl font-bold mb-4">
+      <h1 className="text-2xl font-bold mb-4 text-center">
         Top 10 Targets by Overall Association Score
       </h1>
       <table className="w-full border-collapse">
-        <thead className="bg-red-400 text-white">
+        <thead className="bg-emerald-500 text-white">
           <tr>
             <th className="p-2 border">Target Symbol</th>
             <th className="p-2 border">Overall Score</th>
@@ -74,9 +75,14 @@ const OpenTargets = () => {
         <tbody>
           {targets?.slice(0, 10).map((row, index) => (
             <tr key={index}>
-              <td className="p-2 border text-center">
-                {row.target.approvedSymbol}
+              <td className="p-2 border text-center hover:text-emerald-600">
+                <Link
+                  to={`https://platform.opentargets.org/target/${row.target.id}/associations`}
+                >
+                  {row.target.approvedSymbol}
+                </Link>
               </td>
+
               <td className="p-2 border text-center">{row.score.toFixed(4)}</td>
               <td className="p-2 border text-center">
                 {row.target.approvedName}
